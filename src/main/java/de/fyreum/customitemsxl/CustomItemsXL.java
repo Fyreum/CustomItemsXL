@@ -6,6 +6,7 @@ import de.erethon.commons.javaplugin.DREPluginSettings;
 import de.erethon.factionsxl.FactionsXL;
 import de.fyreum.customitemsxl.command.CICommandCache;
 import de.fyreum.customitemsxl.cooldowns.CooldownManager;
+import de.fyreum.customitemsxl.filter.FilterListener;
 import de.fyreum.customitemsxl.local.ConfigSettings;
 import de.fyreum.customitemsxl.local.FilterSettings;
 import de.fyreum.customitemsxl.logger.DebugMode;
@@ -16,14 +17,18 @@ import de.fyreum.customitemsxl.recipe.IShapelessRecipe;
 import de.fyreum.customitemsxl.recipe.editor.RecipeEditor;
 import de.fyreum.customitemsxl.serialization.ItemFactory;
 import de.fyreum.customitemsxl.serialization.RecipeFactory;
+import de.fyreum.customitemsxl.serialization.file.RootFile;
 import de.fyreum.customitemsxl.serialization.file.RootFileManager;
+import de.fyreum.customitemsxl.serialization.roots.Root;
 import de.fyreum.customitemsxl.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,7 +80,7 @@ public final class CustomItemsXL extends DREPlugin {
         loadCore();
 
         registerCommands();
-        registerListener();
+        registerListeners();
     }
 
     @Override
@@ -226,6 +231,11 @@ public final class CustomItemsXL extends DREPlugin {
         getCommand(CICommandCache.LABEL).setTabCompleter(commandCache);
     }
 
+    public void registerListeners() {
+        Bukkit.getPluginManager().registerEvents(new RecipeEditor(), instance);
+        Bukkit.getPluginManager().registerEvents(new FilterListener(), instance);
+    }
+
     public void reload() {
         removeRecipes();
 
@@ -237,16 +247,31 @@ public final class CustomItemsXL extends DREPlugin {
         loadCore();
     }
 
+    /* "api" stuff */
+
+    @Nullable
+    public ItemStack getItemStack(String id) {
+        return rootFileManager.getMatchingItem(id);
+    }
+
+    @Nullable
+    public Root<ItemStack> getItemRoot(String id) {
+        return rootFileManager.getMatchingItemRoot(id);
+    }
+
+    @Nullable
+    public RootFile<Root<ItemStack>> getItemRootFile(String id) {
+        return rootFileManager.getMatchingItemRootFile(id);
+    }
+
+    /* getter */
+
     public ConfigSettings getConfigSettings() {
         return configSettings;
     }
 
     public FilterSettings getFilterSettings() {
         return filterSettings;
-    }
-
-    public void registerListener() {
-        Bukkit.getPluginManager().registerEvents(new RecipeEditor(), instance);
     }
 
     public FactionsXL getFactionsXL() {
@@ -273,6 +298,8 @@ public final class CustomItemsXL extends DREPlugin {
     public CICommandCache getCommandCache() {
         return commandCache;
     }
+
+    /* statics */
 
     public static NamespacedKey key(String key) {
         return new NamespacedKey(instance, key);

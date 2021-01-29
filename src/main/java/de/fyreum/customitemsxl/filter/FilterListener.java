@@ -1,7 +1,10 @@
 package de.fyreum.customitemsxl.filter;
 
 import de.fyreum.customitemsxl.CustomItemsXL;
+import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
@@ -17,15 +20,22 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class FilterListener implements Listener {
 
     CustomItemsXL plugin = CustomItemsXL.inst();
+
+    private final AttributeModifier noDamageModifier = new AttributeModifier(UUID.fromString("cc7bfff8-4d39-11eb-ae93-0242ac130002"),
+            "noDamage", -1, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlot.HAND);
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onInteract(PlayerInteractEntityEvent event) {
@@ -45,7 +55,7 @@ public class FilterListener implements Listener {
             if (!(event.getDamager() instanceof Projectile) || !(((Projectile) event.getDamager()).getShooter() instanceof HumanEntity)) {
                 return;
             }
-            // sets the damager to the shooter if the event.getDamager() is an arrow.
+            // sets the damager to the shooter if the event.getDamager() is an projectile.
             damager = (HumanEntity) ((Projectile) event.getDamager()).getShooter();
         }
         if (damager == null) {
@@ -97,7 +107,8 @@ public class FilterListener implements Listener {
             return;
         }
         filterEnchants(item);
-        filterMaterial(item);
+        filterItem(item);
+        handleNoItemDamage(item);
     }
 
     public void filterEnchants(ItemStack item) {
@@ -120,8 +131,41 @@ public class FilterListener implements Listener {
         }
     }
 
-    public void filterMaterial(ItemStack item) {
-
+    public void filterItem(ItemStack item) {
+        for (FilteredSubject subject : plugin.getFilterSettings().getFilteredSubjects()) {
+            if (subject.isTarget(item)) {
+                subject.filter(item);
+            }
+        }
     }
 
+    private void handleNoItemDamage(ItemStack item) {
+        if (item.getItemMeta() != null && item.getItemMeta().getLore() != null) {
+            for (String s : plugin.getFilterSettings().getIgnoreDamageFilterLore()) {
+                if (item.getItemMeta().getLore().contains(ChatColor.translateAlternateColorCodes('&', s))) {
+                    return;
+                }
+            }
+        }
+        for (String noDamageItem : plugin.getFilterSettings().getNoDamageTypes()) {
+            if (item.getType().name().contains(noDamageItem)) {
+                ItemMeta meta = item.getItemMeta();
+                try {
+                    meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, noDamageModifier);
+                    meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+                    List<String> lore = meta.getLore();
+                    if (lore == null) {
+                        lore = new ArrayList<>();
+                    }
+                    if (!lore.contains(plugin.getFilterSettings().getNoDamageItemLore())) {
+                        lore.add(plugin.getFilterSettings().getNoDamageItemLore());
+                    }
+                    meta.setLore(lore);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                }
+                item.setItemMeta(meta);
+            }
+        }
+    }
 }

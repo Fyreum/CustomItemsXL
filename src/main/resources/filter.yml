@@ -14,7 +14,7 @@ affectedWorlds:
 
 # every item with a material contained by this list won't deal any damage.
 # to disable a specified tool type, just write the name of the tool type. for example: 'AXE'
-noDamageItems:
+noDamageTypes:
   - 'AXE'
   - 'PICKAXE'
   - 'SHOVEL'
@@ -30,7 +30,7 @@ noDamageItemLore: '&5Werkzeug'
 
 # if true: all villager interactions will get canceled.
 # if false: default interactions
-villagerDisabled: true
+villagerDisabled: false
 
 # enchantment list
 # enabled:  Write down the maximum level of the enchantment that is allowed.
@@ -79,10 +79,7 @@ enchantments:
 #  MULTI_SHOT:
 #  QUICK_CHARGE:
 
-filterDamage:
-
-
-filter:
+filteredSubjects:
   netherite_sword: 'iron_sword'
 # diamond stuff
   diamond_sword: 'iron_sword'

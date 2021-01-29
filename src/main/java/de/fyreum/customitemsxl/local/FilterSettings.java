@@ -2,8 +2,14 @@ package de.fyreum.customitemsxl.local;
 
 import de.erethon.commons.chat.MessageUtil;
 import de.erethon.commons.config.DREConfig;
+import de.fyreum.customitemsxl.CustomItemsXL;
+import de.fyreum.customitemsxl.filter.FilteredItemStack;
+import de.fyreum.customitemsxl.filter.FilteredMaterial;
+import de.fyreum.customitemsxl.filter.FilteredSubject;
 import de.fyreum.customitemsxl.util.Util;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
@@ -19,12 +25,14 @@ public class FilterSettings extends DREConfig {
 
     private final Map<NamespacedKey, Integer> enchantmentValues = new HashMap<>();
     private final List<NamespacedKey> disabledEnchants = new ArrayList<>();
-    private final List<ItemStack> disabledItems = new ArrayList<>();
+    private final List<FilteredSubject> filteredSubjects = new ArrayList<>();
     private boolean disableVillagers = false;
     private double reducedDamageMultiplier = 0.5;
     private String noDamageItemLore = "Tool";
     private String reducedDamageLore = "Reduced player damage";
     private List<String> affectedWorlds = new ArrayList<>();
+    private ArrayList<String> noDamageTypes = new ArrayList<>();
+    private ArrayList<String> ignoreDamageFilterLore = new ArrayList<>();
 
     public FilterSettings(File file) {
         super(file, CONFIG_VERSION);
@@ -61,6 +69,8 @@ public class FilterSettings extends DREConfig {
         noDamageItemLore = MessageUtil.color(Util.notNullValue(config.getString("noDamageItemLore"), noDamageItemLore));
         reducedDamageLore = Util.notNullValue(config.getString("reducedDamageLore"), reducedDamageLore);
         affectedWorlds = Util.notNullValue(config.getStringList("affectedWorlds"), affectedWorlds);
+        noDamageTypes = (ArrayList<String>) config.getStringList("noDamageTypes");
+        ignoreDamageFilterLore = (ArrayList<String>) config.getStringList("ignoreDamageFilterLore");
 
         for (Enchantment enchantment : Enchantment.values()) {
             if (config.get("enchantments." + enchantment.getName()) == null) {
@@ -76,10 +86,39 @@ public class FilterSettings extends DREConfig {
             // sets the maximum level of the given enchantment to the loaded level.
             enchantmentValues.put(enchantment.getKey(), config.getInt("enchantments." + enchantment.getName()));
         }
+        loadItems();
     }
 
     private void loadItems() {
+        ConfigurationSection section = config.getConfigurationSection("filteredSubjects");
+        if (section == null) {
+            return;
+        }
+        section.getValues(false).forEach((s, o) -> {
+            ItemStack item = CustomItemsXL.inst().getItemStack(s);
+            ItemStack itemTo = CustomItemsXL.inst().getItemStack((String) o);
 
+            if (item == null) {
+                Material material = Material.getMaterial(s);
+                if (material == null) {
+                    CustomItemsXL.LOGGER.error("filter.yml", "filter", "Couldn't identify key '" + s + "'");
+                    return;
+                }
+                if (itemTo == null) {
+                    Material materialTo = Material.getMaterial((String) o);
+                    filteredSubjects.add(new FilteredMaterial(material, materialTo));
+                } else {
+                    filteredSubjects.add(new FilteredMaterial(material, itemTo));
+                }
+            } else {
+                if (itemTo == null) {
+                    Material materialTo = Material.getMaterial((String) o);
+                    filteredSubjects.add(new FilteredItemStack(item, materialTo));
+                } else {
+                    filteredSubjects.add(new FilteredItemStack(item, itemTo));
+                }
+            }
+        });
     }
 
     public Map<NamespacedKey, Integer> getEnchantmentValues() {
@@ -88,6 +127,10 @@ public class FilterSettings extends DREConfig {
 
     public List<NamespacedKey> getDisabledEnchants() {
         return disabledEnchants;
+    }
+
+    public List<FilteredSubject> getFilteredSubjects() {
+        return filteredSubjects;
     }
 
     public boolean isDisableVillagers() {
@@ -108,5 +151,13 @@ public class FilterSettings extends DREConfig {
 
     public List<String> getAffectedWorlds() {
         return affectedWorlds;
+    }
+
+    public ArrayList<String> getNoDamageTypes() {
+        return noDamageTypes;
+    }
+
+    public ArrayList<String> getIgnoreDamageFilterLore() {
+        return ignoreDamageFilterLore;
     }
 }
