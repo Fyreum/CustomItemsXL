@@ -1,0 +1,25 @@
+# NOTE: This file was created for explanation reasons.
+#       You don't have to use it to create an recipe, although it's possible.
+#       You can create another file (name doesn't matter) and use ist as well.
+#
+# +-----------------------------------------------+
+# |                Example Recipes                |
+# +-----------------------------------------------+
+# shaped format: {type=TYPE;result=ITEM;amount=AMOUNT;shape=___:___:___;ingredients=CHAR1:INGREDIENT1,CHAR2:INGREDIENT2;group=GROUP;}
+# shapeless format: {type=TYPE;result=ITEM;amount=AMOUNT;ingredients=INGREDIENT1:AMOUNT2,INGREDIENT1:AMOUNT2;group=GROUP;}
+#
+# The numbers 1-9 of the shaped recipe represent the shape out of chars. It doesn't matter which char it ist,
+# as long as each char is combined with an ingredient afterwards.
+#
+# An space symbols nothing (air)
+#
+# Ingredients can be materials, or complete ItemStacks.
+# Other than the ingredients, the result has to be an complete ItemStack.
+#
+# To use an complete ItemStack you need to write the specified ID (e.g. test_sword) of the written ItemStack string.
+#
+# Example shaped:
+# '{type=shaped;result=test_sword;shape= e : e : s ;ingredients=e:emerald,s:stick;group=custom}'
+#
+# Example shapeless:
+# sword_recipe_shaped: '{type=shaped;result=test_sword;shape= e : e : s ;ingredients=e:emerald,s:stick;group=custom}'

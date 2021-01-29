@@ -1,0 +1,15 @@
+cmd:
+  debug:
+    help: "&b/ci debug [(mode)] &8- &7Ändert den Debug-Modus und/oder zeigt diesen an "
+    info: "&aAktueller Debugmodus: &7&&v1"
+  test:
+    help: ""
+    item:
+      success: ""
+    recipe:
+      success: ""
+  item:
+    help: ""
+    add:
+      help: "/ci item add [name] [datei] {...}"
+      success: "&8[&6Geganstand&8] &7wurde registriert"

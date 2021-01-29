@@ -1,0 +1,75 @@
+# NOTE: This file was created for explanation reasons.
+#       You don't have to use it to create an item, although it's possible.
+#       You can create another file (name doesn't matter) and use ist as well.
+#
+# +-----------------------------------------------+
+# |                 Example Lore                  |
+# +-----------------------------------------------+
+# format: text without formatting chars (;, {, }, =, :,) like: 'This is an test lore'
+#
+# ChatColors can be used through the '&' char (e.g. &6 -> gold).
+#
+# If you want to begin with an new line, use <b>.
+#
+# e.g:
+# This is an <b>Test
+#
+#      |
+#      |
+#      V
+#
+# This is an
+# Test
+
+# +-----------------------------------------------+
+# |               Example Modifiers               |
+# +-----------------------------------------------+
+# format: ATTRIBUTE:UUID:NAME:OPERATION:AMOUNT:SLOT;
+#
+# You can use keywords or aliases for things like attributes, uuids, equipment slots or operations.
+# (Except UUID) none of this is case sensitive.
+#
+# KEYWORDS:
+#
+# uuid:
+# -> random UUID: random, r
+#
+# slots:
+# -> unbound: all, 0
+# -> HAND: main, 1
+# -> OFF_HAND: off, 2
+# -> FEET: 3
+# -> LEGS: 4
+# -> CHEST: 5
+# -> HEAD: 6
+#
+# operations:
+# -> ADD_NUMBER: add_n, number, 0
+# -> ADD_SCALAR: add_s, scalar, 1
+# -> MULTIPLY_SCALAR_1: multiply, multiply_scalar, 2
+#
+# attributes: (just remove the first word)
+# -> GENERIC_ATTACK_DAMAGE: attack_damage
+# -> HORSE_JUMP_STRENGTH: jump_strength
+# ...
+#
+# That can shorten the string a bit, e.g:
+#
+# 'generic_attack_damage:04e44924-4f72-11eb-ae93-0242ac130002:TestModifier:add_number:10:off_hand;'
+#
+#                equals:
+#
+# 'attack_damage:random:TestModifier:add_n:10:off;'
+#
+#               shortest:
+#
+# 'attack_damage:r:TestModifier:0:10:2;'
+
+
+# +-----------------------------------------------+
+# |                 Example Items                 |
+# +-----------------------------------------------+
+# required format: {material=MATERIAL;}
+# possible format: {material=MATERIAL;name=NAME;lore=LORE;enchants=NAME:LEVEL;modifiers=ATTRIBUTE:UUID:NAME:OPERATION:AMOUNT:SLOT;unbreakable=true/false;damage=DAMAGE}
+#
+# test_sword: '{material=diamond_sword;name=&6Test Sword;lore=&5This is an lore<b>&dWith 2 lines;modifiers=attack_damage:r:damage:0:10:1;}'

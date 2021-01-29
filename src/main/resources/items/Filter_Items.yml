@@ -1,0 +1,10 @@
+
+# +-----------------------------------------------+
+# |                 Filter Items                  |
+# +-----------------------------------------------+
+
+plate_helmet: '{material=iron_helmet;name=&fSchuppenrüstung;lore=&7Schuppenrüstung<b>;&aQualität: &6★★★★}<b>&aSchmied: &6Schmiedemeister<b>&aHerkunft: &6Gladeia;}'
+plate_chestplate: '{material=iron_chestplate;name=&fSchuppenrüstung;lore=&7Schuppenrüstung<b>;&aQualität: &6★★★★}<b>&aSchmied: &6Schmiedemeister<b>&aHerkunft: &6Gladeia;}'
+plate_leggings: '{material=iron_leggings;name=&fSchuppenrüstung;lore=&7Schuppenrüstung<b>;&aQualität: &6★★★★}<b>&aSchmied: &6Schmiedemeister<b>&aHerkunft: &6Gladeia;}'
+plate_boots: '{material=iron_boots;name=&fSchuppenrüstung;lore=&7Schuppenrüstung<b>;&aQualität: &6★★★★}<b>&aSchmied: &6Schmiedemeister<b>&aHerkunft: &6Gladeia;}'
+

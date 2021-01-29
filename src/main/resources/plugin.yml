@@ -1,0 +1,10 @@
+name: CustomItemsXL
+version: @version@
+main: de.fyreum.customitemsxl.CustomItemsXL
+api-version: 1.16
+authors: [Fyreum]
+description: (de)serialization of ItemStacks and Recipes
+commands:
+  customitemsxl:
+    aliases: ci
+    description: main command

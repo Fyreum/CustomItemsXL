@@ -1,0 +1,97 @@
+
+# +------------------------------------------------------+
+# |              Item filter Configuration               |
+# +------------------------------------------------------+
+
+# Note:    You can change these options while the server is running.
+#          To load your changes on the running server, use the /ci reload command.
+
+# the damage reduction multiplier (damage*multiplier)
+reducedDamageMultiplier: 0.5
+# every world that is listed here will be affected by the filter.
+affectedWorlds:
+  - 'Saragandes'
+
+# every item with a material contained by this list won't deal any damage.
+# to disable a specified tool type, just write the name of the tool type. for example: 'AXE'
+noDamageItems:
+  - 'AXE'
+  - 'PICKAXE'
+  - 'SHOVEL'
+  - 'HOE'
+
+# if an item has one of the following lore the damage filter won't affect them.
+ignoreDamageFilterLore:
+  - '&7Streitaxt'
+  - '&7Holzfälleraxt'
+
+# this lore will be given to every item with 0 damage.
+noDamageItemLore: '&5Werkzeug'
+
+# if true: all villager interactions will get canceled.
+# if false: default interactions
+villagerDisabled: true
+
+# enchantment list
+# enabled:  Write down the maximum level of the enchantment that is allowed.
+#           Higher level will get downgraded to the maximum allowed one.
+#           If the number is 0 or below: the enchantment will be removed.
+
+# disabled: Enchantments that aren't listed won't be affected by the filter.
+#           Remove the '#' in front of the enchantment to enable the filter on it.
+#           Enabled enchantments with a value of null won't be affected either.
+enchantments:
+  DAMAGE_ALL: 2
+#  DAMAGE_ARTHROPODS:
+  DAMAGE_UNDEAD: 3
+  ARROW_DAMAGE: 2
+#  ARROW_INFINITE:
+  ARROW_KNOCKBACK: 1
+  ARROW_FIRE: 0
+  PROTECTION_ENVIRONMENTAL: 1
+  PROTECTION_FIRE: 0
+  PROTECTION_PROJECTILE: 0
+  PROTECTION_EXPLOSIONS: 0
+#  PROTECTION_FALL:
+  THORNS: 0
+  SWEEPING_EDGE: 0
+  FIRE_ASPECT: 1
+#  KNOCKBACK:
+#  LOOT_BONUS_MOBS:
+#  LOOT_BONUS_BLOCKS:
+#  DIG_SPEED:
+#  SILK_TOUCH:
+#  DURABILITY:
+#  MENDING:
+#  FROST_WALKER:
+#  WATER_WORKER:
+#  DEPTH_STRIDER:
+#  OXYGEN:
+#  RIPTIDE:
+#  CHANNELING:
+#  VANISHING_CURSE:
+#  BINDING_CURSE:
+#  LUCK:
+#  LURE:
+#  IMPALING:
+#  LOYALTY:
+#  PIERCING:
+#  MULTI_SHOT:
+#  QUICK_CHARGE:
+
+filterDamage:
+
+
+filter:
+  netherite_sword: 'iron_sword'
+# diamond stuff
+  diamond_sword: 'iron_sword'
+  diamond_helmet: 'plate_helmet'
+  diamond_chestplate: 'plate_chestplate'
+  diamond_leggings: 'plate_leggings'
+  diamond_boots: 'plate_boots'
+# iron stuff
+  iron_helmet: 'plate_helmet'
+  iron_chestplate: 'plate_chestplate'
+  iron_leggings: 'plate_leggings'
+  iron_boots: 'plate_boots'
