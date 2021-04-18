@@ -4,7 +4,16 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import de.erethon.commons.chat.MessageUtil;
 import de.erethon.commons.misc.NumberUtil;
-import de.fyreum.customitemsxl.util.*;
+import de.fyreum.customitemsxl.util.AttributeFinder;
+import de.fyreum.customitemsxl.util.DeniedBuilderAccessException;
+import de.fyreum.customitemsxl.util.EnchantmentFinder;
+import de.fyreum.customitemsxl.util.EquipmentSlotFinder;
+import de.fyreum.customitemsxl.util.OperationFinder;
+import de.fyreum.customitemsxl.util.SecuredStringBuilder;
+import de.fyreum.customitemsxl.util.StringKeyed;
+import de.fyreum.customitemsxl.util.Util;
+import de.fyreum.customitemsxl.util.Validate;
+import de.fyreum.customitemsxl.util.ValidationException;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -145,7 +154,7 @@ public class ItemFactory {
             }
             if (!loreBuilder.isEmpty()) {
                 // [...] test lore, more than one line; [...]
-                meta.setLore(Util.coloredList(loreBuilder.toString().split("<b>")));
+                meta.setLore(Util.coloredAsList(loreBuilder.toString().split("<b>")));
             }
             if (!enchantsBuilder.isEmpty()) {
                 // [...] sharpness:1,unbreaking:3; [...]

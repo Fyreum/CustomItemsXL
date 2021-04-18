@@ -5,7 +5,6 @@ import de.erethon.commons.javaplugin.DREPlugin;
 import de.erethon.commons.javaplugin.DREPluginSettings;
 import de.erethon.factionsxl.FactionsXL;
 import de.fyreum.customitemsxl.command.CICommandCache;
-import de.fyreum.customitemsxl.cooldowns.CooldownManager;
 import de.fyreum.customitemsxl.filter.FilterListener;
 import de.fyreum.customitemsxl.local.ConfigSettings;
 import de.fyreum.customitemsxl.local.FilterSettings;
@@ -23,6 +22,7 @@ import de.fyreum.customitemsxl.serialization.roots.Root;
 import de.fyreum.customitemsxl.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
@@ -31,10 +31,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.Iterator;
+import java.util.Set;
 
 public final class CustomItemsXL extends DREPlugin {
 
@@ -48,7 +46,6 @@ public final class CustomItemsXL extends DREPlugin {
     private ConfigSettings configSettings;
     private FilterSettings filterSettings;
     private RootFileManager rootFileManager;
-    private CooldownManager cooldownManager;
     private ItemFactory itemFactory;
     private RecipeFactory recipeFactory;
     private FactionsXL factionsXL;
@@ -65,38 +62,19 @@ public final class CustomItemsXL extends DREPlugin {
     @Override
     public void onEnable() {
         super.onEnable();
-
         instance = this;
 
-        factionsXLHook();
         initFolders();
         initExampleFiles();
 
-        loadConfigs();
-
-        LOGGER.setDebugMode(configSettings.getDebugMode());
-
-        loadMessages();
         loadCore();
-
-        registerCommands();
-        registerListeners();
     }
 
     @Override
     public void onDisable() {
         rootFileManager.saveRoots();
-    }
-
-    private void factionsXLHook() {
-        if (Bukkit.getPluginManager().isPluginEnabled("FactionsXL")) {
-            factionsXL = (FactionsXL) Bukkit.getPluginManager().getPlugin("FactionsXL");
-            if (factionsXL == null) {
-                LOGGER.log("&cCouldn't load FactionsXL properly.");
-            } else {
-                LOGGER.log("&aSuccessfully connected to FactionsXL.");
-            }
-        }
+        removeRecipes();
+        HandlerList.unregisterAll(this);
     }
 
     public void initFolders() {
@@ -117,14 +95,45 @@ public final class CustomItemsXL extends DREPlugin {
 
     public void initExampleFiles() {
         Util.initFile(instance, new File(ITEMS, "ExampleItems.yml"), "items/ExampleItems.yml");
-        Util.initFile(instance, new File(ITEMS, "ExampleRecipes.yml"), "recipes/ExampleRecipes.yml");
+        Util.initFile(instance, new File(RECIPES, "ExampleRecipes.yml"), "recipes/ExampleRecipes.yml");
+    }
+
+    public void loadCore() {
+        factionsXLHook();
+
+        initialize();
+
+        loadConfigs();
+
+        LOGGER.setDebugMode(configSettings.getDebugMode());
+
+        loadMessages();
+        loadRoots();
+        loadFilterSettings();
+
+        registerRecipes();
+        registerCommands();
+        registerListeners();
+    }
+
+    public void factionsXLHook() {
+        if (Bukkit.getPluginManager().isPluginEnabled("FactionsXL")) {
+            factionsXL = (FactionsXL) Bukkit.getPluginManager().getPlugin("FactionsXL");
+            if (factionsXL == null) {
+                LOGGER.log("&cCouldn't load FactionsXL properly.");
+            } else {
+                LOGGER.log("&aSuccessfully connected to FactionsXL.");
+            }
+        }
+    }
+
+    public void initialize() {
+        itemFactory = new ItemFactory();
+        recipeFactory = new RecipeFactory();
     }
 
     public void loadConfigs() {
         configSettings = new ConfigSettings(new File(getDataFolder(), "config.yml"));
-        // Copies the default file instead of creating a new empty file, to see the comments as well
-        File filterFile = Util.initFile(instance, new File(getDataFolder(), "filter.yml"), "filter.yml");
-        filterSettings = new FilterSettings(filterFile);
     }
 
     public void loadMessages() {
@@ -133,29 +142,25 @@ public final class CustomItemsXL extends DREPlugin {
         getMessageHandler().setDefaultLanguage(configSettings.getLanguage());
     }
 
-    public void loadCore() {
-        initialize();
-        loadRoots();
-        registerRecipes();
-    }
-
-    public void initialize() {
-        cooldownManager = new CooldownManager(instance);
-        itemFactory = new ItemFactory();
-        recipeFactory = new RecipeFactory();
-    }
-
     public void loadRoots() {
         rootFileManager = new RootFileManager();
         rootFileManager.loadItems(ITEMS);
         rootFileManager.loadRecipes(RECIPES);
     }
 
+    public void loadFilterSettings() {
+        // Copies the default file instead of creating a new empty file, to see the comments as well
+        File filterFile = Util.initFile(instance, new File(getDataFolder(), "filter.yml"), "filter.yml");
+        filterSettings = new FilterSettings(filterFile);
+    }
+
     public void registerRecipes() {
         LOGGER.info("Adding recipes...");
-        for (IRecipe recipe : rootFileManager.getRecipes()) {
+        Set<IRecipe> recipes = rootFileManager.getRecipes();
+        for (IRecipe recipe : recipes) {
             addRecipe(recipe);
         }
+        LOGGER.info("Added " + recipes.size() + " recipes");
     }
 
     public boolean addRecipe(@NotNull IRecipe recipe) {
@@ -169,7 +174,7 @@ public final class CustomItemsXL extends DREPlugin {
     }
 
     public boolean addRecipe(@NotNull IShapelessRecipe recipe) {
-        LOGGER.debug(DebugMode.MEDIUM, "Adding: " + recipe.toString());
+        LOGGER.debug(DebugMode.MEDIUM, "Adding: " + recipe);
 
         Iterator<Recipe> iterator = Bukkit.recipeIterator();
         while (iterator.hasNext()) {
@@ -192,7 +197,7 @@ public final class CustomItemsXL extends DREPlugin {
     }
 
     public boolean addRecipe(@NotNull IShapedRecipe recipe) {
-        LOGGER.debug(DebugMode.MEDIUM, "Adding: " + recipe.toString());
+        LOGGER.debug(DebugMode.MEDIUM, "Adding: " + recipe);
 
         Iterator<Recipe> iterator = Bukkit.recipeIterator();
         while (iterator.hasNext()) {
@@ -228,7 +233,6 @@ public final class CustomItemsXL extends DREPlugin {
         commandCache = new CICommandCache(instance);
         setCommandCache(commandCache);
         commandCache.register(instance);
-        getCommand(CICommandCache.LABEL).setTabCompleter(commandCache);
     }
 
     public void registerListeners() {
@@ -237,13 +241,7 @@ public final class CustomItemsXL extends DREPlugin {
     }
 
     public void reload() {
-        removeRecipes();
-
-        initFolders();
-        initExampleFiles();
-
-        loadConfigs();
-        loadMessages();
+        onDisable();
         loadCore();
     }
 
@@ -264,6 +262,24 @@ public final class CustomItemsXL extends DREPlugin {
         return rootFileManager.getMatchingItemRootFile(id);
     }
 
+    @Nullable
+    public Root<ItemStack> getItemRoot(ItemStack item) {
+        return rootFileManager.getMatchingItemRoot(item);
+    }
+
+    @Nullable
+    public RootFile<Root<ItemStack>> getItemRootFile(ItemStack item) {
+        return rootFileManager.getMatchingItemRootFile(item);
+    }
+
+    public Root<ItemStack> register(String file, String id, ItemStack item) {
+        return rootFileManager.addItem(file, id, item);
+    }
+
+    public Root<IRecipe> register(String file, String id, IRecipe recipe) {
+        return rootFileManager.addRecipe(file, id, recipe);
+    }
+
     /* getter */
 
     public ConfigSettings getConfigSettings() {
@@ -276,10 +292,6 @@ public final class CustomItemsXL extends DREPlugin {
 
     public FactionsXL getFactionsXL() {
         return factionsXL;
-    }
-
-    public CooldownManager getCooldownManager(){
-        return cooldownManager;
     }
 
     public ItemFactory getItemFactory() {

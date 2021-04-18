@@ -65,6 +65,12 @@ public class RootFileManager {
         return root;
     }
 
+    public void removeItem(String key) {
+        for (RootFile<Root<ItemStack>> file : itemRootFiles) {
+            file.remove(key);
+        }
+    }
+
     public Root<IRecipe> addRecipe(String fileName, String key, IRecipe recipe) {
         RootFile<Root<IRecipe>> file = getMatchingRecipeRootFile(fileName);
         if (file == null) {
@@ -79,11 +85,32 @@ public class RootFileManager {
         return root;
     }
 
+    public boolean removeRecipe(String key) {
+        for (RootFile<Root<IRecipe>> file : recipeRootFiles) {
+            if (file.remove(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Nullable
     public RootFile<Root<ItemStack>> getMatchingItemRootFile(String fileName) {
         for (RootFile<Root<ItemStack>> file : itemRootFiles) {
             if (file.getFile().getName().equalsIgnoreCase(fileName)) {
                 return file;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public RootFile<Root<ItemStack>> getMatchingItemRootFile(ItemStack item) {
+        for (RootFile<Root<ItemStack>> file : itemRootFiles) {
+            for (Root<ItemStack> root : file.getRoots()) {
+                if (root.getDeserialized().isSimilar(item)) {
+                    return file;
+                }
             }
         }
         return null;
@@ -103,6 +130,16 @@ public class RootFileManager {
     public Root<ItemStack> getMatchingItemRoot(String id) {
         for (Root<ItemStack> root : getItemRoots()) {
             if (root.getId().equalsIgnoreCase(id)) {
+                return root;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public Root<ItemStack> getMatchingItemRoot(ItemStack item) {
+        for (Root<ItemStack> root : getItemRoots()) {
+            if (root.getDeserialized().isSimilar(item)) {
                 return root;
             }
         }

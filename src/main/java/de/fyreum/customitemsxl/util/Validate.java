@@ -112,6 +112,10 @@ public class Validate {
         }
     }
 
+    public static <T> T[] length(T[] a, int l) {
+        return length(a, l, "");
+    }
+
     public static <T> T[] length(T[] a, int l, String msg) {
         if (a.length != l) {
             throw new ValidationException(msg);

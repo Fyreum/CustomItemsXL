@@ -22,4 +22,9 @@ public class MaterialIngredient implements IRecipeIngredient {
     public String getSerialized() {
         return serialized;
     }
+
+    @Override
+    public String toString() {
+        return serialized;
+    }
 }

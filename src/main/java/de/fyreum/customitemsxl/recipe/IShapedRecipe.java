@@ -1,7 +1,5 @@
 package de.fyreum.customitemsxl.recipe;
 
-import de.fyreum.customitemsxl.CustomItemsXL;
-import de.fyreum.customitemsxl.logger.DebugMode;
 import de.fyreum.customitemsxl.recipe.ingredients.IRecipeIngredient;
 import de.fyreum.customitemsxl.recipe.result.RecipeResult;
 import de.fyreum.customitemsxl.serialization.RecipeFactory;
@@ -24,12 +22,10 @@ public class IShapedRecipe extends ShapedRecipe implements IRecipe {
 
     public IShapedRecipe(NamespacedKey key, RecipeResult result, String[] shape, @NotNull Map<Character, IRecipeIngredient> ingredients, String group) {
         super(key, result.getItemStack());
-        CustomItemsXL.LOGGER.debug(DebugMode.EXTENDED, "Creating IShapedRecipe...");
         this.result = result;
         this.amount = result.getItemStack().getAmount();
         this.shape(shape);
         this.ingredients = ingredients;
-        CustomItemsXL.LOGGER.debug(DebugMode.EXTENDED, "Ingredients: " + ingredients.toString());
         ingredients.forEach((c, i) -> this.setIngredient(c, i.getRecipeChoice()));
         this.setGroup(group);
     }

@@ -23,4 +23,9 @@ public class ItemIngredient implements IRecipeIngredient {
     public String getSerialized() {
         return serialized;
     }
+
+    @Override
+    public String toString() {
+        return serialized;
+    }
 }

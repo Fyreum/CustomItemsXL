@@ -6,8 +6,6 @@ import de.fyreum.customitemsxl.local.Messages;
 import de.fyreum.customitemsxl.logger.DebugMode;
 import org.bukkit.command.CommandSender;
 
-import java.util.Arrays;
-
 public class DebugCommand extends DRECommand {
 
     public DebugCommand() {

@@ -28,11 +28,11 @@ public class FilterSettings extends DREConfig {
     private final List<FilteredSubject> filteredSubjects = new ArrayList<>();
     private boolean disableVillagers = false;
     private double reducedDamageMultiplier = 0.5;
-    private String noDamageItemLore = "Tool";
-    private String reducedDamageLore = "Reduced player damage";
+    private String noDamageItemLore = "&5Werkzeug";
+    private String reducedDamageLore = "&7Reduzierter Spielerschaden";
     private List<String> affectedWorlds = new ArrayList<>();
-    private ArrayList<String> noDamageTypes = new ArrayList<>();
-    private ArrayList<String> ignoreDamageFilterLore = new ArrayList<>();
+    private List<String> noDamageTypes = new ArrayList<>();
+    private List<String> ignoreDamageFilterLore = new ArrayList<>();
 
     public FilterSettings(File file) {
         super(file, CONFIG_VERSION);
@@ -67,10 +67,10 @@ public class FilterSettings extends DREConfig {
         disableVillagers = config.getBoolean("disableVillagers") ;
         reducedDamageMultiplier = config.getDouble("reducedDamageMultiplier");
         noDamageItemLore = MessageUtil.color(Util.notNullValue(config.getString("noDamageItemLore"), noDamageItemLore));
-        reducedDamageLore = Util.notNullValue(config.getString("reducedDamageLore"), reducedDamageLore);
+        reducedDamageLore = MessageUtil.color(Util.notNullValue(config.getString("reducedDamageLore"), reducedDamageLore));
         affectedWorlds = Util.notNullValue(config.getStringList("affectedWorlds"), affectedWorlds);
-        noDamageTypes = (ArrayList<String>) config.getStringList("noDamageTypes");
-        ignoreDamageFilterLore = (ArrayList<String>) config.getStringList("ignoreDamageFilterLore");
+        noDamageTypes = config.getStringList("noDamageTypes");
+        ignoreDamageFilterLore = Util.color(config.getStringList("ignoreDamageFilterLore"));
 
         for (Enchantment enchantment : Enchantment.values()) {
             if (config.get("enchantments." + enchantment.getName()) == null) {
@@ -90,7 +90,7 @@ public class FilterSettings extends DREConfig {
     }
 
     private void loadItems() {
-        ConfigurationSection section = config.getConfigurationSection("filteredSubjects");
+        ConfigurationSection section = config.getConfigurationSection("filtered");
         if (section == null) {
             return;
         }
@@ -99,20 +99,20 @@ public class FilterSettings extends DREConfig {
             ItemStack itemTo = CustomItemsXL.inst().getItemStack((String) o);
 
             if (item == null) {
-                Material material = Material.getMaterial(s);
+                Material material = Material.getMaterial(s.toUpperCase());
                 if (material == null) {
-                    CustomItemsXL.LOGGER.error("filter.yml", "filter", "Couldn't identify key '" + s + "'");
+                    CustomItemsXL.LOGGER.error("filter.yml", "Couldn't identify key '" + s + "'");
                     return;
                 }
                 if (itemTo == null) {
-                    Material materialTo = Material.getMaterial((String) o);
+                    Material materialTo = Material.getMaterial(((String) o).toUpperCase());
                     filteredSubjects.add(new FilteredMaterial(material, materialTo));
                 } else {
                     filteredSubjects.add(new FilteredMaterial(material, itemTo));
                 }
             } else {
                 if (itemTo == null) {
-                    Material materialTo = Material.getMaterial((String) o);
+                    Material materialTo = Material.getMaterial(((String) o).toUpperCase());
                     filteredSubjects.add(new FilteredItemStack(item, materialTo));
                 } else {
                     filteredSubjects.add(new FilteredItemStack(item, itemTo));
@@ -153,11 +153,11 @@ public class FilterSettings extends DREConfig {
         return affectedWorlds;
     }
 
-    public ArrayList<String> getNoDamageTypes() {
+    public List<String> getNoDamageTypes() {
         return noDamageTypes;
     }
 
-    public ArrayList<String> getIgnoreDamageFilterLore() {
+    public List<String> getIgnoreDamageFilterLore() {
         return ignoreDamageFilterLore;
     }
 }

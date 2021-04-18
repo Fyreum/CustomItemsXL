@@ -70,10 +70,10 @@
                 <includes>
                     <include>plugin.yml</include>
                     <include>config.yml</include>
+                    <include>filter.yml</include>
                     <include>languages/*</include>
                     <include>items/*</include>
                     <include>recipes/*</include>
-                    <include>skills/*</include>
                 </includes>
             </resource>
         </resources>

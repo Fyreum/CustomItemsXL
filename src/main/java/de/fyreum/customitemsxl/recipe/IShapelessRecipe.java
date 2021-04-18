@@ -1,7 +1,5 @@
 package de.fyreum.customitemsxl.recipe;
 
-import de.fyreum.customitemsxl.CustomItemsXL;
-import de.fyreum.customitemsxl.logger.DebugMode;
 import de.fyreum.customitemsxl.recipe.ingredients.IRecipeIngredient;
 import de.fyreum.customitemsxl.recipe.result.RecipeResult;
 import de.fyreum.customitemsxl.serialization.RecipeFactory;
@@ -23,11 +21,9 @@ public class IShapelessRecipe extends ShapelessRecipe implements IRecipe {
 
     public IShapelessRecipe(NamespacedKey key, @NotNull RecipeResult result,  @NotNull Map<IRecipeIngredient, Integer> ingredients, String group) {
         super(key, result.getItemStack());
-        CustomItemsXL.LOGGER.debug(DebugMode.EXTENDED, "Creating IShapedRecipe...");
         this.result = result;
         this.amount = result.getItemStack().getAmount();
         this.ingredients = ingredients;
-        CustomItemsXL.LOGGER.debug(DebugMode.EXTENDED, "Ingredients: " + ingredients.toString());
         ingredients.forEach(this::addIngredients);
         this.setGroup(group);
     }

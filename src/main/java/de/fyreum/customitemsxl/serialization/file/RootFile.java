@@ -72,27 +72,23 @@ public abstract class RootFile<R extends Root<?>> {
 
     public void reload() {
         load();
-        try {
-            for (String key: toDelete) {
-                this.config.set(key, null);
-            }
-            for (R root : toSave) {
-                this.config.set(root.getId(), root.getSerialized());
-            }
-            this.config.save(this.file);
-        } catch (IOException var2) {
-            CustomItemsXL.LOGGER.error("Could not save " + this.file.getPath() + "...");
+        for (String key: toDelete) {
+            this.config.set(key, null);
         }
+        for (R root : toSave) {
+            this.config.set(root.getId(), root.getSerialized());
+        }
+        save();
     }
 
-    public void addRoot(R r) {
-        this.roots.add(r);
+    public boolean addRoot(R r) {
         this.toSave.add(r);
+        return this.roots.add(r);
     }
 
-    public void remove(String key) {
-        roots.removeIf(root -> root.getId().equalsIgnoreCase(key));
+    public boolean remove(String key) {
         toDelete.add(key);
+        return roots.removeIf(root -> root.getId().equalsIgnoreCase(key));
     }
 
     public File getFile() {

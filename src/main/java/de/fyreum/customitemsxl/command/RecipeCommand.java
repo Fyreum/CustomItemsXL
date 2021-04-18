@@ -29,7 +29,7 @@ public class RecipeCommand extends DRECommand {
         setMaxArgs(Integer.MAX_VALUE);
         setConsoleCommand(false);
         setPlayerCommand(true);
-        setHelp("/ci recipe [add|editor] [(key)] [(file)] [...]");
+        setHelp("/ci recipe [add|delete|editor] [(key)] [(file)] [...]");
         setPermission("customitemsxl.cmd.recipe");
     }
 
@@ -73,6 +73,17 @@ public class RecipeCommand extends DRECommand {
                 String file = args[3];
 
                 RecipeEditor.startSession(id, file.replace(".yml", "") + ".yml", player);
+            } else if (isDeleteCommand(cmd)) {
+                Validate.senderHasPermission(player, "customitemsxl.cmd.recipe.delete");
+
+                Validate.length(args, 3, getRedHelp());
+
+                String id = args[2];
+
+                IRecipe recipe = plugin.getRootFileManager().getMatchingRecipe(id);
+                plugin.getRootFileManager().removeRecipe(id);
+
+                MessageUtil.sendMessage(player, ChatColor.GREEN + "deleted: " + ChatColor.GRAY + recipe);
             } else {
                 MessageUtil.sendMessage(player, getRedHelp());
             }
@@ -87,6 +98,10 @@ public class RecipeCommand extends DRECommand {
 
     public boolean isAddCommand(String s) {
         return s.equalsIgnoreCase("add") | s.equalsIgnoreCase("a");
+    }
+
+    public boolean isDeleteCommand(String s) {
+        return s.equalsIgnoreCase("delete") | s.equalsIgnoreCase("d");
     }
 
     public boolean isEditorCommand(String s) {

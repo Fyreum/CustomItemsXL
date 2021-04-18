@@ -1,4 +1,4 @@
-
+configVersion: 1
 # +------------------------------------------------------+
 # |              Item filter Configuration               |
 # +------------------------------------------------------+
@@ -8,6 +8,10 @@
 
 # the damage reduction multiplier (damage*multiplier)
 reducedDamageMultiplier: 0.5
+
+# this lore signals reduced player damage.
+reducedDamageLore: '&7Reduzierter Spielerschaden'
+
 # every world that is listed here will be affected by the filter.
 affectedWorlds:
   - 'Saragandes'
@@ -30,7 +34,7 @@ noDamageItemLore: '&5Werkzeug'
 
 # if true: all villager interactions will get canceled.
 # if false: default interactions
-villagerDisabled: false
+disableVillagers: false
 
 # enchantment list
 # enabled:  Write down the maximum level of the enchantment that is allowed.
@@ -79,7 +83,7 @@ enchantments:
 #  MULTI_SHOT:
 #  QUICK_CHARGE:
 
-filteredSubjects:
+filtered:
   netherite_sword: 'iron_sword'
 # diamond stuff
   diamond_sword: 'iron_sword'

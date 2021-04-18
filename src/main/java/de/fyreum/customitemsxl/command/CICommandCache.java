@@ -10,6 +10,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,6 +39,12 @@ public class CICommandCache extends DRECommandCache implements TabCompleter {
         addCommand(reloadCommand);
     }
 
+    @Override
+    public void register(JavaPlugin plugin) {
+        super.register(plugin);
+        plugin.getCommand(CICommandCache.LABEL).setTabCompleter(this);
+    }
+
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command unused1, @NotNull String unused2, @NotNull String[] args) {
@@ -57,12 +64,13 @@ public class CICommandCache extends DRECommandCache implements TabCompleter {
             return completes;
         } else {
             int length = args.length;
-
             String sub = args[1];
+
             if (itemCommand.getCommand().equalsIgnoreCase(cmd) || itemCommand.getAliases().contains(cmd)) {
                 if (length == 2) {
                     if ("add".startsWith(sub.toLowerCase())) completes.add("add");
                     if ("addHand".startsWith(sub.toLowerCase())) completes.add("addHand");
+                    if ("delete".startsWith(sub.toLowerCase())) completes.add("delete");
                     if ("give".startsWith(sub.toLowerCase())) completes.add("give");
                     return completes;
                 }
@@ -71,10 +79,12 @@ public class CICommandCache extends DRECommandCache implements TabCompleter {
                         completes.add("<name>");
                         return completes;
                     }
-                    if (itemCommand.isGiveCommand(sub)) {
+                    if (itemCommand.isGiveCommand(sub) | itemCommand.isDeleteCommand(sub)) {
                         for (Root<ItemStack> root : plugin.getRootFileManager().getItemRoots()) {
                             String id = root.getId();
-                            if (id.toLowerCase().startsWith(args[2].toLowerCase())) completes.add(id);
+                            if (id.toLowerCase().startsWith(args[2].toLowerCase())) {
+                                completes.add(id);
+                            }
                         }
                         return completes;
                     }
@@ -82,7 +92,9 @@ public class CICommandCache extends DRECommandCache implements TabCompleter {
                 if (length == 4 && (itemCommand.isAddCommand(sub) | itemCommand.isAddHandCommand(sub))) {
                     for (RootFile<Root<ItemStack>> file : plugin.getRootFileManager().getItemRootFiles()) {
                         String f = file.getFile().getName().replace(".yml", "");
-                        if (f.toLowerCase().startsWith(args[3].toLowerCase())) completes.add(f);
+                        if (f.toLowerCase().startsWith(args[3].toLowerCase())) {
+                            completes.add(f);
+                        }
                     }
                     return completes;
                 }
@@ -94,7 +106,8 @@ public class CICommandCache extends DRECommandCache implements TabCompleter {
             if (recipeCommand.getCommand().equalsIgnoreCase(cmd) || recipeCommand.getAliases().contains(cmd)) {
                 if (length == 2) {
                     if ("add".startsWith(sub.toLowerCase())) completes.add("add");
-                    if ("editor".startsWith(sub.toLowerCase()))completes.add("editor");
+                    if ("editor".startsWith(sub.toLowerCase())) completes.add("editor");
+                    if ("delete".startsWith(sub.toLowerCase())) completes.add("delete");
                     return completes;
                 }
                 if (length == 3) {
@@ -102,10 +115,12 @@ public class CICommandCache extends DRECommandCache implements TabCompleter {
                         completes.add("<name>");
                         return completes;
                     }
-                    if (recipeCommand.isEditorCommand(sub)) {
+                    if (recipeCommand.isEditorCommand(sub) | recipeCommand.isDeleteCommand(sub)) {
                         for (Root<IRecipe> root : plugin.getRootFileManager().getRecipeRoots()) {
                             String id = root.getId();
-                            if (id.toLowerCase().startsWith(args[2].toLowerCase())) completes.add(id);
+                            if (id.toLowerCase().startsWith(args[2].toLowerCase())) {
+                                completes.add(id);
+                            }
                         }
                         return completes;
                     }
@@ -113,7 +128,9 @@ public class CICommandCache extends DRECommandCache implements TabCompleter {
                 if (length == 4 && (recipeCommand.isAddCommand(sub) | recipeCommand.isEditorCommand(sub))) {
                     for (RootFile<Root<IRecipe>> file : plugin.getRootFileManager().getRecipeRootFiles()) {
                         String f = file.getFile().getName().replace(".yml", "");
-                        if (f.toLowerCase().startsWith(args[3].toLowerCase())) completes.add(f);
+                        if (f.toLowerCase().startsWith(args[3].toLowerCase())) {
+                            completes.add(f);
+                        }
                     }
                     return completes;
                 }

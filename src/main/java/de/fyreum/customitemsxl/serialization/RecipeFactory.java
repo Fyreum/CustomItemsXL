@@ -1,6 +1,7 @@
 package de.fyreum.customitemsxl.serialization;
 
 import de.fyreum.customitemsxl.CustomItemsXL;
+import de.fyreum.customitemsxl.logger.DebugMode;
 import de.fyreum.customitemsxl.recipe.IRecipe;
 import de.fyreum.customitemsxl.recipe.IShapedRecipe;
 import de.fyreum.customitemsxl.recipe.IShapelessRecipe;
@@ -68,7 +69,7 @@ public class RecipeFactory {
                 sb.append("group=").append(shapelessRecipe.getGroup()).append(";");
             }
         }
-        return "{" + sb.toString() + "}";
+        return "{" + sb + "}";
     }
 
     public IRecipe deserialize(NamespacedKey rKey, String serialized) {
@@ -165,6 +166,7 @@ public class RecipeFactory {
                     ingredients.put(c, buildIngredient(s[1]));
                 }
 
+                CustomItemsXL.LOGGER.debug(DebugMode.EXTENDED, "Creating IShapedRecipe '" + rKey.getKey() + "'...");
                 return new IShapedRecipe(rKey, buildResult(resultBuilder.toString(), amount), shape, ingredients, group);
             } else {
                 Validate.check(shapeBuilder.isEmpty(), "You cannot set an shape for shapeless recipes (Make sure that type=TYPE is the first statement)");
@@ -183,6 +185,7 @@ public class RecipeFactory {
                     ingredients.put(ingredient, a);
                 }
 
+                CustomItemsXL.LOGGER.debug(DebugMode.EXTENDED, "Creating IShapelessRecipe '" + rKey.getKey() + "'...");
                 return new IShapelessRecipe(rKey, buildResult(resultBuilder.toString(), amount), ingredients, group);
             }
         } catch (ConfigSerializationError | ValidationException e) {

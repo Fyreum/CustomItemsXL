@@ -4,9 +4,7 @@ import de.erethon.commons.chat.MessageUtil;
 import de.erethon.commons.misc.NumberUtil;
 import de.fyreum.customitemsxl.CustomItemsXL;
 import de.fyreum.customitemsxl.logger.DebugMode;
-import de.fyreum.customitemsxl.skill.condition.TargetCondition;
 import de.fyreum.customitemsxl.serialization.ConfigSerializationError;
-import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -80,7 +78,7 @@ public class Util {
         for (int i = 0; ; i++) {
             b.append(k[i]).append(":").append(v[i]);
             if (i == iMax) {
-                return brace ? "{" + b.toString() + "}" : b.toString();
+                return brace ? "{" + b + "}" : b.toString();
             }
             b.append(",");
         }
@@ -190,15 +188,6 @@ public class Util {
         return false;
     }
 
-    public static List<Entity> conditioned(@NotNull Entity attacker, @NotNull List<Entity> entities, TargetCondition... conditions) {
-        for (TargetCondition condition : conditions) {
-            if (condition != null) {
-                entities.removeIf(entity -> !condition.fullFilled(attacker, entity));
-            }
-        }
-        return entities;
-    }
-
     public static String[] color(String... a) {
         for (int i = 0; i < a.length; i++) {
             a[i] = MessageUtil.color(a[i]);
@@ -206,7 +195,15 @@ public class Util {
         return a;
     }
 
-    public static List<String> coloredList(String... a) {
+    public static List<String> color(List<String> list) {
+        List<String> colored = new ArrayList<>();
+        for (String s : list) {
+            colored.add(MessageUtil.color(s));
+        }
+        return colored;
+    }
+
+    public static List<String> coloredAsList(String... a) {
         return Arrays.asList(color(a));
     }
 

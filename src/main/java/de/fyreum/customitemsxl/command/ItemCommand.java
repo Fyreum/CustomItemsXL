@@ -27,7 +27,7 @@ public class ItemCommand extends DRECommand {
         setMaxArgs(Integer.MAX_VALUE);
         setConsoleCommand(false);
         setPlayerCommand(true);
-        setHelp("/ci item [add|addHand|give] [(key)] [(file)] ({...})");
+        setHelp("/ci item [add|addHand|delete|give] [(key)] [(file)] ({...})");
         setPermission("customitemsxl.cmd.item");
     }
 
@@ -69,9 +69,20 @@ public class ItemCommand extends DRECommand {
                 Validate.length(args, 3, 4, getRedHelp());
 
                 ItemStack item = Validate.notNull(plugin.getRootFileManager().getMatchingItem(args[2]), "Item not found");
-                Player target = args.length != 4 ? player :  Validate.notNull(Bukkit.getPlayer(args[3]), "Player not found");
+                Player target = args.length != 4 ? player : Validate.notNull(Bukkit.getPlayer(args[3]), "Player not found");
 
                 target.getInventory().addItem(item);
+            } else if (isDeleteCommand(cmd)) {
+                Validate.senderHasPermission(player, "customitemsxl.cmd.item.delete");
+
+                Validate.length(args, 3, getRedHelp());
+
+                String id = args[2];
+
+                ItemStack item = plugin.getRootFileManager().getMatchingItem(id);
+                plugin.getRootFileManager().removeItem(id);
+
+                MessageUtil.sendMessage(player, ChatColor.GREEN + "deleted: " + ChatColor.GRAY + item);
             } else {
                 MessageUtil.sendMessage(player, getRedHelp());
             }
@@ -90,6 +101,10 @@ public class ItemCommand extends DRECommand {
 
     public boolean isAddHandCommand(String s) {
         return s.equalsIgnoreCase("addHand");
+    }
+
+    public boolean isDeleteCommand(String s) {
+        return s.equalsIgnoreCase("delete") | s.equalsIgnoreCase("d");
     }
 
     public boolean isGiveCommand(String s) {
